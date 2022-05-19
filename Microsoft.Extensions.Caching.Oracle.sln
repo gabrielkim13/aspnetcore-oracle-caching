@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Extensions.Caching.Oracle", "src\Microsoft.Extensions.Caching.Oracle.csproj", "{46D47948-B11A-480E-90A2-044B4E266276}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Extensions.Caching.Oracle.Tests", "test\Microsoft.Extensions.Caching.Oracle.Tests.csproj", "{B4EF5602-86BA-4BE6-94CB-E09996C27981}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46D47948-B11A-480E-90A2-044B4E266276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46D47948-B11A-480E-90A2-044B4E266276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46D47948-B11A-480E-90A2-044B4E266276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46D47948-B11A-480E-90A2-044B4E266276}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4EF5602-86BA-4BE6-94CB-E09996C27981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4EF5602-86BA-4BE6-94CB-E09996C27981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4EF5602-86BA-4BE6-94CB-E09996C27981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4EF5602-86BA-4BE6-94CB-E09996C27981}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
