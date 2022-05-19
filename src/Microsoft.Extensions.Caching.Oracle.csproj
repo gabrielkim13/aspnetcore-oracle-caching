@@ -1,20 +1,48 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Company />
+        <Authors>Gabriel Kim</Authors>
+        <Description>ASP.NET Core's Distributed Cache implementation using Oracle Database</Description>
+        <Copyright></Copyright>
+        <RepositoryUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>cache, distributedcache, oracle</PackageTags>
+        <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+        <PackageId>gabrielkim13.Extensions.Caching.Oracle</PackageId>
+        <Product>gabrielkim13.Extensions.Caching.Oracle</Product>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>C:\Users\gabri\Desktop\github\Microsoft.Extensions.Caching.Oracle\LICENSE</PackageLicenseFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Microsoft.Extensions.Caching.Oracle.Tests"/>
+        <InternalsVisibleTo Include="Microsoft.Extensions.Caching.Oracle.Tests" />
+    </ItemGroup>
+
+	<PropertyGroup>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	</PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+
+      <None Include="..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>	
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0"/>
-        <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+        <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
     </ItemGroup>
 
 </Project>

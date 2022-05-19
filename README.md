@@ -60,7 +60,7 @@ In order to add it to the ASP.NET Core's main repository, we would need to have:
 
 - [X] All tests passing
 - [ ] Properly documented code
-- [ ] Means of publishing this package to NuGet under it's intended name, i.e. `Microsoft.Extensions.Caching.Oracle`
+- [ ] Means of publishing this package to NuGet under its intended name, i.e. `Microsoft.Extensions.Caching.Oracle`
 
 ## Authors
 
