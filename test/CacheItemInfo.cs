@@ -4,11 +4,12 @@ namespace Microsoft.Extensions.Caching.Oracle;
 
 public class CacheItemInfo
 {
-    public string Id { get; set; }
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
+    public required string Id { get; set; }
 
-    public byte[] Value { get; set; }
+    public required byte[] Value { get; init; }
 
-    public DateTimeOffset ExpiresAtTime { get; set; }
+    public DateTimeOffset ExpiresAtTime { get; init; }
 
     public TimeSpan? SlidingExpirationInSeconds { get; set; }
 

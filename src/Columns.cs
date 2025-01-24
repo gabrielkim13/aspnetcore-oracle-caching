@@ -1,7 +1,10 @@
-﻿namespace Microsoft.Extensions.Caching.Oracle;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Microsoft.Extensions.Caching.Oracle;
 
 internal static class Columns
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class Names
     {
         public const string CacheItemId = "Id";

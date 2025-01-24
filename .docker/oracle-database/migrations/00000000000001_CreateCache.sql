@@ -1,0 +1,10 @@
+ALTER SESSION
+SET CURRENT_SCHEMA = "CACHING";
+
+CREATE TABLE "Cache" (
+    "Id" NVARCHAR2(900) NOT NULL CONSTRAINT "PK_Cache" PRIMARY KEY,
+    "Value" BLOB NOT NULL,
+    "ExpiresAtTime" TIMESTAMP(7) WITH TIME ZONE NOT NULL,
+    "SlidingExpirationInSeconds" NUMBER(19),
+    "AbsoluteExpiration" TIMESTAMP(7) WITH TIME ZONE
+);

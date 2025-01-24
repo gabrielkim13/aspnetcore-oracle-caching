@@ -8,9 +8,8 @@ public static class OracleCachingServicesExtensions
     public static IServiceCollection AddDistributedOracleCache(this IServiceCollection services,
         Action<OracleCacheOptions> setupAction)
     {
-        if (services is null) throw new ArgumentNullException(nameof(services));
-
-        if (setupAction is null) throw new ArgumentNullException(nameof(setupAction));
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(setupAction);
 
         services.AddOptions();
         AddOracleCacheServices(services);

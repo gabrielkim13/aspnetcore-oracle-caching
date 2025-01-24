@@ -1,59 +1,95 @@
-# Caching - Oracle Database
+<a id="readme-top"></a>
+
+<br />
+<div align="center">
+  <h3 align="center">ASP.NET Core - Oracle Database Distributed Cache</h3>
+</div>
+
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about">About</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#instalation">Instalation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+
+## About
 
 ASP.NET Core's Distributed Cache implementation using Oracle Database.
 
-## Setup
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Requirements
+### Built With
 
-- [Git](https://git-scm.com/downloads)
+- [![.NET][.NET]][.NET-url]
+  - [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Getting Started
+
+### Prerequisites
+
 - [Docker](https://docs.docker.com/get-docker/)
-    - [Docker Compose](https://docs.docker.com/compose/install/)
-- [Visual Studio](https://visualstudio.microsoft.com/downloads/) ou [Rider](https://www.jetbrains.com/rider/)
-- [.NET](https://dotnet.microsoft.com/en-us/download/dotnet)
-    - 6.0 (LTS)
+  - [Docker Compose](https://docs.docker.com/compose/install/)
+- [Git](https://git-scm.com/downloads)
+- [.NET](https://learn.microsoft.com/en-us/dotnet/core/install/windows)
 
-### Oracle Database
+### Instalation
 
-To use and test this package, it is necessary to have the Docker image `oracle/database:19.3.0-ee` installed.
+Restore the solution do download its projects' dependencies:
 
-Unfortunately, Oracle doesn't provide it on [Docker Hub](https://hub.docker.com/), but it can be built from scratch by
-following the instructions on https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance.
-
-Alternatively, it is also possible to pull it from the author's own Docker Hub account:
-
-```bash
-docker pull gabrielkim13/oracle-database:19.3.0-ee
-docker tag gabrielkim13/oracle-database:19.3.0-ee oracle/database:19.3.0-ee
+```sh
+dotnet restore
 ```
 
-Finally, deploy the Oracle Database container via the `docker-compose.yaml`, with the following command:
+And use Docker Compose to provision the containerized infrastructure:
 
-```bash
-docker-compose -p caching up -d
+```sh
+docker compose -p aspnetcore-oracle-caching up -d --build
 ```
 
-## Instructions
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-To add the Oracle distributed cache service to your application, add these lines to your startup code:
+## Usage
+
+To add the Oracle distributed cache service to your application, add these lines to your startup
+code:
 
 ```c#
 builder.Services.AddDistributedOracleCache(options =>
 {
     options.ConnectionString = builder.Configuration.GetConnectionString("DistCache_ConnectionString");
-    options.SchemaName = "Caching";
+    options.SchemaName = "CACHING";
     options.TableName = "Cache";
 });
 ```
 
 For more details, on using distributed cache in ASP.NET Core, refer to the docs: 
-[Distributed caching in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-6.0).
+[Distributed caching in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed).
 
-## Credits
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Roadmap
 
 > *Imitation is the sincerest form of flattery*
 
-As it so happens, this package is essentially a port of the SQL Server distributed cache implemented on ASP.NET Core:
+As it so happens, this package is essentially a port of the SQL Server distributed cache implemented
+on ASP.NET Core:
 [Microsoft.Extensions.Caching.SqlServer](https://github.com/dotnet/aspnetcore/tree/main/src/Caching)
 
 In order to add it to the ASP.NET Core's main repository, we would need to have:
@@ -62,6 +98,13 @@ In order to add it to the ASP.NET Core's main repository, we would need to have:
 - [ ] Properly documented code
 - [ ] Means of publishing this package to NuGet under its intended name, i.e. `Microsoft.Extensions.Caching.Oracle`
 
-## Authors
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-- **Gabriel Kim** - *Developer / Maintainer* - [gabrielkim13@gmail.com]()
+## Contact
+
+- Gabriel Kim - [gabrielkim13](https://github.com/gabrielkim13) - gabrielkim13@gmail.com
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+[.NET]: https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white
+[.NET-url]: https://dotnet.microsoft.com/en-us/

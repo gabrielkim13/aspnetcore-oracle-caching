@@ -9,7 +9,10 @@ public class OracleCache : IDistributedCache
     private static readonly TimeSpan MinimumExpiredItemsDeletionInterval = TimeSpan.FromMinutes(5);
     private static readonly TimeSpan DefaultExpiredItemsDeletionInterval = TimeSpan.FromMinutes(30);
 
+#pragma warning disable CA1859
     private readonly IDatabaseOperations _dbOperations;
+#pragma warning restore CA1859
+
     private readonly TimeSpan _defaultSlidingExpiration;
     private readonly Action _deleteExpiredCachedItemsDelegate;
     private readonly TimeSpan _expiredItemsDeletionInterval;
@@ -36,11 +39,8 @@ public class OracleCache : IDistributedCache
                 $"{nameof(OracleCacheOptions.ExpiredItemsDeletionInterval)} cannot be less than the minimum value of {MinimumExpiredItemsDeletionInterval.TotalMinutes} minutes.");
 
         if (cacheOptions.DefaultSlidingExpiration <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(
-                nameof(cacheOptions.DefaultSlidingExpiration),
-                cacheOptions.DefaultSlidingExpiration,
-                "The sliding expiration value must be positive."
-            );
+            throw new ArgumentOutOfRangeException(nameof(options), options,
+                "The sliding expiration value must be positive.");
 
         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
         _systemClock = cacheOptions.SystemClock ?? new SystemClock();
@@ -58,7 +58,7 @@ public class OracleCache : IDistributedCache
 
     public byte[]? Get(string key)
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         var value = _dbOperations.GetCacheItem(key);
 
@@ -69,7 +69,7 @@ public class OracleCache : IDistributedCache
 
     public async Task<byte[]?> GetAsync(string key, CancellationToken token = new())
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         token.ThrowIfCancellationRequested();
 
@@ -82,9 +82,9 @@ public class OracleCache : IDistributedCache
 
     public void Set(string key, byte[] value, DistributedCacheEntryOptions options)
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
-        if (value is null) throw new ArgumentNullException(nameof(value));
-        if (options is null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(options);
 
         GetOptions(ref options);
 
@@ -96,9 +96,9 @@ public class OracleCache : IDistributedCache
     public async Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options,
         CancellationToken token = new())
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
-        if (value is null) throw new ArgumentNullException(nameof(value));
-        if (options is null) throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(options);
 
         token.ThrowIfCancellationRequested();
 
@@ -111,7 +111,7 @@ public class OracleCache : IDistributedCache
 
     public void Refresh(string key)
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         _dbOperations.RefreshCacheItem(key);
 
@@ -120,7 +120,7 @@ public class OracleCache : IDistributedCache
 
     public async Task RefreshAsync(string key, CancellationToken token = new())
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         token.ThrowIfCancellationRequested();
 
@@ -131,7 +131,7 @@ public class OracleCache : IDistributedCache
 
     public void Remove(string key)
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         _dbOperations.DeleteCacheItem(key);
 
@@ -140,7 +140,7 @@ public class OracleCache : IDistributedCache
 
     public async Task RemoveAsync(string key, CancellationToken token = new())
     {
-        if (key is null) throw new ArgumentNullException(nameof(key));
+        ArgumentNullException.ThrowIfNull(key);
 
         token.ThrowIfCancellationRequested();
 
@@ -172,6 +172,6 @@ public class OracleCache : IDistributedCache
         if (!options.AbsoluteExpiration.HasValue
             && !options.AbsoluteExpirationRelativeToNow.HasValue
             && !options.SlidingExpiration.HasValue)
-            options = new DistributedCacheEntryOptions {SlidingExpiration = _defaultSlidingExpiration};
+            options = new DistributedCacheEntryOptions { SlidingExpiration = _defaultSlidingExpiration };
     }
 }

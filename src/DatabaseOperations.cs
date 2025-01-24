@@ -1,36 +1,31 @@
 ﻿using System.Data;
+
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Internal;
+
 using Oracle.ManagedDataAccess.Client;
 
 namespace Microsoft.Extensions.Caching.Oracle;
 
-public class DatabaseOperations : IDatabaseOperations
+public class DatabaseOperations(string connectionString, string schemaName, string tableName, ISystemClock systemClock)
+    : IDatabaseOperations
 {
     private const int DuplicateKeyErrorId = 1; // ORA-00001
 
-    public DatabaseOperations(string connectionString, string schemaName, string tableName, ISystemClock systemClock)
-    {
-        ConnectionString = connectionString;
-        SchemaName = schemaName;
-        TableName = tableName;
-        SystemClock = systemClock;
-        SqlQueries = new SqlQueries(schemaName, tableName);
-    }
+    private SqlQueries SqlQueries { get; } = new(schemaName, tableName);
 
-    internal SqlQueries SqlQueries { get; }
+    private string ConnectionString { get; } = connectionString;
 
-    internal string ConnectionString { get; }
+    // ReSharper disable once UnusedMember.Global
+    internal string SchemaName { get; } = schemaName;
 
-    internal string SchemaName { get; }
+    // ReSharper disable once UnusedMember.Global
+    internal string TableName { get; } = tableName;
 
-    internal string TableName { get; }
-
-    private ISystemClock SystemClock { get; }
+    private ISystemClock SystemClock { get; } = systemClock;
 
     public byte[]? GetCacheItem(string key)
     {
-        // when retrieving an item, we do an UPDATE first and then a SELECT
         InternalRefreshCacheItem(key);
 
         return InternalGetCacheItem(key);
@@ -38,7 +33,6 @@ public class DatabaseOperations : IDatabaseOperations
 
     public async Task<byte[]?> GetCacheItemAsync(string key, CancellationToken token = default)
     {
-        // when retrieving an item, we do an UPDATE first and then a SELECT
         token.ThrowIfCancellationRequested();
 
         await InternalRefreshCacheItemAsync(key, token).ConfigureAwait(false);
@@ -120,8 +114,8 @@ public class DatabaseOperations : IDatabaseOperations
         {
             if (IsDuplicateKeyException(ex))
             {
-                // There is a possibility that multiple requests can try to add the same item to the cache, in
-                // which case we receive a 'duplicate key' exception on the primary key column.
+                // There is a possibility that multiple requests can try to add the same item to the cache, in which
+                // case we receive a 'duplicate key' exception on the primary key column.
             }
             else
             {

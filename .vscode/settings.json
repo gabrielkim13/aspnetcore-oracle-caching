@@ -1,0 +1,21 @@
+{
+  "editor.formatOnSave": true,
+  "editor.rulers": [
+    100
+  ],
+  "sqltools.format": {
+    "language": "pl/sql",
+    "linesBetweenQueries": 2,
+    "reservedWordCase": "upper"
+  },
+  "[jsonc]": {
+    "editor.formatOnSave": false
+  },
+  "[markdown]": {
+    "editor.wordWrap": "off"
+  },
+  "[sql]": {
+    "editor.defaultFormatter": "mtxr.sqltools",
+    "editor.formatOnSave": false
+  }
+}

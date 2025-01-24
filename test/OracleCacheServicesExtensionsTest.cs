@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
+
 using Moq;
 
 // ReSharper disable once CheckNamespace
@@ -44,7 +45,7 @@ public class OracleCacheServicesExtensionsTest
         var distributedCache = services.FirstOrDefault(desc => desc.ServiceType == typeof(IDistributedCache));
 
         Assert.NotNull(distributedCache);
-        Assert.Equal(ServiceLifetime.Scoped, distributedCache!.Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, distributedCache.Lifetime);
         Assert.IsType<OracleCache>(serviceProvider.GetRequiredService<IDistributedCache>());
     }
 

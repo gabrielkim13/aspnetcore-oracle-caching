@@ -1,9 +1,10 @@
 ﻿using System.Data;
 using System.Globalization;
-using System.Text;
+
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Internal;
+
 using Oracle.ManagedDataAccess.Client;
 
 // ReSharper disable once CheckNamespace
@@ -18,30 +19,27 @@ public class OracleCacheWithDatabaseTest
     private readonly string _schemaName;
     private readonly string _tableName;
 
-
     public OracleCacheWithDatabaseTest()
     {
-        // TODO: Figure how to use config.json which requires resolving IApplicationEnvironment which currently fails.
-
         var memoryConfigurationData = new Dictionary<string, string>
         {
             // When creating a test database, these values must be used in the parameters to 'dotnet sql-cache create'.
             // If you have to use other parameters for some reason, make sure to update this!
             {
                 ConnectionStringKey,
-                "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=ORCLCDB)(SERVICE_NAME=ORCLPDB1))); User Id=CACHING; Password=root;"
+                "User Id=CACHING;Password=root;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=FREE)))"
             },
-            {SchemaNameKey, "Caching"},
-            {TableNameKey, "Cache"}
+            { SchemaNameKey, "CACHING" },
+            { TableNameKey, "Cache" }
         };
 
         var configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.AddInMemoryCollection(memoryConfigurationData);
+        configurationBuilder.AddInMemoryCollection(memoryConfigurationData!);
 
         var configuration = configurationBuilder.Build();
-        _tableName = configuration[TableNameKey];
-        _schemaName = configuration[SchemaNameKey];
-        _connectionString = configuration[ConnectionStringKey];
+        _tableName = configuration[TableNameKey]!;
+        _schemaName = configuration[SchemaNameKey]!;
+        _connectionString = configuration[ConnectionStringKey]!;
     }
 
     [Fact]
@@ -63,17 +61,14 @@ public class OracleCacheWithDatabaseTest
         // Arrange
         var testClock = new TestClock();
         var key = Guid.NewGuid().ToString();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var cache = GetOracleCache(GetCacheOptions(testClock));
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-        {
-            return cache.SetAsync(
-                key,
-                expectedValue,
-                new DistributedCacheEntryOptions().SetAbsoluteExpiration(testClock.UtcNow.AddHours(-1)));
-        });
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => cache.SetAsync(
+            key,
+            expectedValue,
+            new DistributedCacheEntryOptions().SetAbsoluteExpiration(testClock.UtcNow.AddHours(-1))));
         Assert.Equal("The absolute expiration value must be in the future.", exception.Message);
     }
 
@@ -84,7 +79,7 @@ public class OracleCacheWithDatabaseTest
         // Create a key with the maximum allowed key length. Here a key of length 898 bytes is created.
         var key = new string('a', OracleParameterCollectionExtensions.CacheItemIdColumnWidth);
         var testClock = new TestClock();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var cache = GetOracleCache(GetCacheOptions(testClock));
 
         // Act
@@ -110,18 +105,17 @@ public class OracleCacheWithDatabaseTest
         // Arrange
         var key = Guid.NewGuid().ToString();
         var testClock = new TestClock();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var cacheOptions = GetCacheOptions(testClock);
         var cache = GetOracleCache(cacheOptions);
         var expectedExpirationTime = testClock.UtcNow.Add(cacheOptions.DefaultSlidingExpiration);
 
         // Act
-        await cache.SetAsync(key, expectedValue, new DistributedCacheEntryOptions
-        {
-            AbsoluteExpiration = null,
-            AbsoluteExpirationRelativeToNow = null,
-            SlidingExpiration = null
-        });
+        await cache.SetAsync(key, expectedValue,
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpiration = null, AbsoluteExpirationRelativeToNow = null, SlidingExpiration = null
+            });
 
         // Assert
         await AssertGetCacheItemFromDatabaseAsync(
@@ -149,19 +143,18 @@ public class OracleCacheWithDatabaseTest
         // Arrange
         var key = Guid.NewGuid().ToString();
         var testClock = new TestClock();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var cacheOptions = GetCacheOptions(testClock);
         cacheOptions.DefaultSlidingExpiration = cacheOptions.DefaultSlidingExpiration.Add(TimeSpan.FromMinutes(10));
         var cache = GetOracleCache(cacheOptions);
         var expectedExpirationTime = testClock.UtcNow.Add(cacheOptions.DefaultSlidingExpiration);
 
         // Act
-        await cache.SetAsync(key, expectedValue, new DistributedCacheEntryOptions
-        {
-            AbsoluteExpiration = null,
-            AbsoluteExpirationRelativeToNow = null,
-            SlidingExpiration = null
-        });
+        await cache.SetAsync(key, expectedValue,
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpiration = null, AbsoluteExpirationRelativeToNow = null, SlidingExpiration = null
+            });
 
         // Assert
         await AssertGetCacheItemFromDatabaseAsync(
@@ -190,7 +183,7 @@ public class OracleCacheWithDatabaseTest
         // Create a key which is greater than the maximum length.
         var key = new string('b', OracleParameterCollectionExtensions.CacheItemIdColumnWidth + 1);
         var testClock = new TestClock();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var cache = GetOracleCache(GetCacheOptions(testClock));
 
         // Act
@@ -216,7 +209,7 @@ public class OracleCacheWithDatabaseTest
         var cache = GetOracleCache(GetCacheOptions(testClock));
         await cache.SetAsync(
             key,
-            Encoding.UTF8.GetBytes("Hello, World!"),
+            "Hello, World!"u8.ToArray(),
             new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(slidingExpirationWindow)));
 
         // set the clock's UtcNow far in future
@@ -239,7 +232,7 @@ public class OracleCacheWithDatabaseTest
         var slidingExpirationWindow = TimeSpan.FromSeconds(10);
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var expectedExpirationTime = testClock.UtcNow.AddSeconds(expected);
         await cache.SetAsync(
             key,
@@ -270,7 +263,7 @@ public class OracleCacheWithDatabaseTest
         var absoluteExpiration = utcNow.Add(TimeSpan.FromSeconds(20));
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         await cache.SetAsync(
             key,
             expectedValue,
@@ -296,7 +289,7 @@ public class OracleCacheWithDatabaseTest
         var cache = GetOracleCache(GetCacheOptions(testClock));
         await cache.SetAsync(
             key,
-            Encoding.UTF8.GetBytes("Hello, World!"),
+            "Hello, World!"u8.ToArray(),
             new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(10)));
 
         // set the clock's UtcNow far in future
@@ -318,7 +311,7 @@ public class OracleCacheWithDatabaseTest
         var cache = GetOracleCache(GetCacheOptions(testClock));
         await cache.SetAsync(
             key,
-            Encoding.UTF8.GetBytes("Hello, World!"),
+            "Hello, World!"u8.ToArray(),
             new DistributedCacheEntryOptions()
                 .SetAbsoluteExpiration(testClock.UtcNow.Add(TimeSpan.FromSeconds(30))));
 
@@ -340,7 +333,7 @@ public class OracleCacheWithDatabaseTest
         var absoluteExpirationRelativeToUtcNow = TimeSpan.FromSeconds(10);
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var expectedAbsoluteExpiration = testClock.UtcNow.Add(absoluteExpirationRelativeToUtcNow);
 
         // Act
@@ -364,11 +357,11 @@ public class OracleCacheWithDatabaseTest
     public async Task DoesNotThrowException_WhenOnlyAbsoluteExpirationSupplied_AbsoluteExpiration()
     {
         // Arrange
-        var _ = new TestClock();
+        _ = new TestClock();
         var expectedAbsoluteExpiration = new DateTimeOffset(2025, 1, 1, 1, 0, 0, TimeSpan.Zero);
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
 
         // Act
         await cache.SetAsync(
@@ -394,7 +387,7 @@ public class OracleCacheWithDatabaseTest
         var testClock = new TestClock();
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         var absoluteExpiration = testClock.UtcNow.Add(TimeSpan.FromSeconds(10));
 
         // Act & Assert
@@ -461,7 +454,7 @@ public class OracleCacheWithDatabaseTest
         var slidingExpiration = TimeSpan.FromSeconds(10);
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         // The operations Set and Refresh here extend the sliding expiration 2 times.
         var expectedExpiresAtTime = testClock.UtcNow.AddSeconds(15);
         await cache.SetAsync(
@@ -477,7 +470,7 @@ public class OracleCacheWithDatabaseTest
         // verify if the expiration time in database is set as expected
         var cacheItemInfo = await GetCacheItemFromDatabaseAsync(key);
         Assert.NotNull(cacheItemInfo);
-        Assert.Equal(slidingExpiration, cacheItemInfo!.SlidingExpirationInSeconds);
+        Assert.Equal(slidingExpiration, cacheItemInfo.SlidingExpirationInSeconds);
         Assert.Null(cacheItemInfo.AbsoluteExpiration);
         Assert.Equal(expectedExpiresAtTime, cacheItemInfo.ExpiresAtTime);
     }
@@ -492,7 +485,7 @@ public class OracleCacheWithDatabaseTest
         var absoluteExpiration = utcNow.Add(TimeSpan.FromSeconds(20));
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         await cache.SetAsync(
             key,
             expectedValue,
@@ -504,7 +497,7 @@ public class OracleCacheWithDatabaseTest
         // Act && Assert
         var cacheItemInfo = await GetCacheItemFromDatabaseAsync(key);
         Assert.NotNull(cacheItemInfo);
-        Assert.Equal(utcNow.AddSeconds(5), cacheItemInfo!.ExpiresAtTime);
+        Assert.Equal(utcNow.AddSeconds(5), cacheItemInfo.ExpiresAtTime);
 
         // Accessing item at time...
         utcNow = testClock.Add(TimeSpan.FromSeconds(5)).UtcNow;
@@ -547,7 +540,7 @@ public class OracleCacheWithDatabaseTest
         var expectedExpiresAtTime = testClock.UtcNow.Add(absoluteExpirationRelativeToNow);
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         await cache.SetAsync(
             key,
             expectedValue,
@@ -564,7 +557,7 @@ public class OracleCacheWithDatabaseTest
         // verify if the expiration time in database is set as expected
         var cacheItemInfo = await GetCacheItemFromDatabaseAsync(key);
         Assert.NotNull(cacheItemInfo);
-        Assert.Equal(expectedExpiresAtTime, cacheItemInfo!.ExpiresAtTime);
+        Assert.Equal(expectedExpiresAtTime, cacheItemInfo.ExpiresAtTime);
     }
 
     [Fact]
@@ -575,7 +568,7 @@ public class OracleCacheWithDatabaseTest
         var slidingExpiration = TimeSpan.FromSeconds(10);
         var key = Guid.NewGuid().ToString();
         var cache = GetOracleCache(GetCacheOptions(testClock));
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         // The operations Set and Refresh here extend the sliding expiration 2 times.
         var expectedExpiresAtTime = testClock.UtcNow.AddSeconds(15);
         await cache.SetAsync(
@@ -591,7 +584,7 @@ public class OracleCacheWithDatabaseTest
         // verify if the expiration time in database is set as expected
         var cacheItemInfo = await GetCacheItemFromDatabaseAsync(key);
         Assert.NotNull(cacheItemInfo);
-        Assert.Equal(slidingExpiration, cacheItemInfo!.SlidingExpirationInSeconds);
+        Assert.Equal(slidingExpiration, cacheItemInfo.SlidingExpirationInSeconds);
         Assert.Null(cacheItemInfo.AbsoluteExpiration);
         Assert.Equal(expectedExpiresAtTime, cacheItemInfo.ExpiresAtTime);
     }
@@ -604,7 +597,7 @@ public class OracleCacheWithDatabaseTest
         var cache = GetOracleCache();
         await cache.SetAsync(
             key,
-            Encoding.UTF8.GetBytes("Hello, World!"),
+            "Hello, World!"u8.ToArray(),
             new DistributedCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(1)));
 
         // Act
@@ -620,7 +613,7 @@ public class OracleCacheWithDatabaseTest
         // Arrange
         var key = string.Format(CultureInfo.InvariantCulture, "  {0}  ", Guid.NewGuid()); // with trailing spaces
         var cache = GetOracleCache();
-        var expectedValue = Encoding.UTF8.GetBytes("Hello, World!");
+        var expectedValue = "Hello, World!"u8.ToArray();
         await cache.SetAsync(
             key,
             expectedValue,
@@ -642,7 +635,7 @@ public class OracleCacheWithDatabaseTest
         var cache = GetOracleCache();
         await cache.SetAsync(
             key,
-            Encoding.UTF8.GetBytes("Hello, World!"),
+            "Hello, World!"u8.ToArray(),
             new DistributedCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(10)));
 
         // Act
@@ -653,7 +646,7 @@ public class OracleCacheWithDatabaseTest
         Assert.Null(cacheItemInfo);
     }
 
-    private IDistributedCache GetOracleCache(OracleCacheOptions? options = null)
+    private OracleCache GetOracleCache(OracleCacheOptions? options = null)
     {
         options ??= GetCacheOptions();
 
@@ -673,7 +666,7 @@ public class OracleCacheWithDatabaseTest
     }
 
     private async Task AssertGetCacheItemFromDatabaseAsync(
-        IDistributedCache cache,
+        OracleCache cache,
         string key,
         byte[] expectedValue,
         TimeSpan? slidingExpiration,
@@ -685,7 +678,7 @@ public class OracleCacheWithDatabaseTest
         Assert.Equal(expectedValue, value);
         var cacheItemInfo = await GetCacheItemFromDatabaseAsync(key);
         Assert.NotNull(cacheItemInfo);
-        Assert.Equal(slidingExpiration, cacheItemInfo!.SlidingExpirationInSeconds);
+        Assert.Equal(slidingExpiration, cacheItemInfo.SlidingExpirationInSeconds);
         Assert.Equal(absoluteExpiration, cacheItemInfo.AbsoluteExpiration);
         Assert.Equal(expectedExpirationTime, cacheItemInfo.ExpiresAtTime);
     }
@@ -698,15 +691,16 @@ public class OracleCacheWithDatabaseTest
         var command = connection.CreateCommand();
 
         command.BindByName = true;
-        command.CommandText = @$"
-            SELECT Id,
-                   Value,
-                   TO_CHAR(ExpiresAtTime, 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM'),
-                   SlidingExpirationInSeconds,
-                   TO_CHAR(AbsoluteExpiration, 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM')
-            FROM {_tableName}
-            WHERE Id = :Id
-        ";
+        command.CommandText =
+            $"""
+             SELECT "Id",
+                    "Value",
+                    TO_CHAR("ExpiresAtTime", 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM'),
+                    "SlidingExpirationInSeconds",
+                    TO_CHAR("AbsoluteExpiration", 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM')
+             FROM "{_tableName}"
+             WHERE "Id" = :Id
+             """;
         command.Parameters.AddWithValue("Id", OracleDbType.NVarchar2, key);
 
         var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow);
@@ -727,9 +721,10 @@ public class OracleCacheWithDatabaseTest
         {
             var slidingExpirationInSeconds = await reader.GetFieldValueAsync<decimal>(3);
 
-            cacheItemInfo.SlidingExpirationInSeconds = TimeSpan.FromSeconds((long) slidingExpirationInSeconds);
+            cacheItemInfo.SlidingExpirationInSeconds = TimeSpan.FromSeconds((long)slidingExpirationInSeconds);
         }
 
+        // ReSharper disable once InvertIf
         if (!await reader.IsDBNullAsync(4))
         {
             var absoluteExpiration = await reader.GetFieldValueAsync<string>(4);

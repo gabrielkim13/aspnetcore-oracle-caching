@@ -1,0 +1,5 @@
+services:
+  oracle-database:
+    build: .docker/oracle-database
+    ports:
+      - 1521:1521

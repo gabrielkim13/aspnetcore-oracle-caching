@@ -5,9 +5,9 @@ namespace Microsoft.Extensions.Caching.Oracle;
 
 public class OracleCacheOptions : IOptions<OracleCacheOptions>
 {
-    public ISystemClock SystemClock { get; set; } = new SystemClock();
+    public ISystemClock SystemClock { get; init; } = new SystemClock();
 
-    public TimeSpan? ExpiredItemsDeletionInterval { get; set; }
+    public TimeSpan? ExpiredItemsDeletionInterval { get; init; }
 
     public string? ConnectionString { get; set; }
 

@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.1.3"/>
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Company />
         <Authors>Gabriel Kim</Authors>
         <Description>ASP.NET Core's Distributed Cache implementation using Oracle Database</Description>
-        <Copyright></Copyright>
+        <Copyright>Gabriel Kim</Copyright>
         <RepositoryUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>cache, distributedcache, oracle</PackageTags>
@@ -15,7 +16,10 @@
         <PackageId>gabrielkim13.Extensions.Caching.Oracle</PackageId>
         <Product>gabrielkim13.Extensions.Caching.Oracle</Product>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageLicenseFile>C:\Users\gabri\Desktop\github\Microsoft.Extensions.Caching.Oracle\LICENSE</PackageLicenseFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <Version>2.0.0</Version>
+        <Title>ASP.NET Core - Oracle Database Distributed Cache</Title>
+        <PackageProjectUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -39,10 +43,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-        <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.61" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Options" />
+        <PackageReference Include="Oracle.ManagedDataAccess.Core" />
     </ItemGroup>
 
 </Project>

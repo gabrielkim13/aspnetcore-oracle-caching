@@ -3,12 +3,8 @@
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.Caching.Oracle;
 
-internal class TestOracleCacheOptions : IOptions<OracleCacheOptions>
+// ReSharper disable once UnusedType.Global
+internal class TestOracleCacheOptions(OracleCacheOptions innerOptions) : IOptions<OracleCacheOptions>
 {
-    public TestOracleCacheOptions(OracleCacheOptions innerOptions)
-    {
-        Value = innerOptions;
-    }
-
-    public OracleCacheOptions Value { get; }
+    public OracleCacheOptions Value { get; } = innerOptions;
 }

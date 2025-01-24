@@ -1,4 +1,5 @@
 ﻿using System.Data;
+
 using Oracle.ManagedDataAccess.Client;
 
 namespace Microsoft.Extensions.Caching.Oracle;
