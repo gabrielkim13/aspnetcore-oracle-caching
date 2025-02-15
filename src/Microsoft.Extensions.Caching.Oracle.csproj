@@ -17,7 +17,7 @@
         <Product>gabrielkim13.Extensions.Caching.Oracle</Product>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <Version>2.0.0</Version>
+        <Version>2.1.0</Version>
         <Title>ASP.NET Core - Oracle Database Distributed Cache</Title>
         <PackageProjectUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</PackageProjectUrl>
     </PropertyGroup>
@@ -48,5 +48,4 @@
         <PackageReference Include="Microsoft.Extensions.Options" />
         <PackageReference Include="Oracle.ManagedDataAccess.Core" />
     </ItemGroup>
-
 </Project>

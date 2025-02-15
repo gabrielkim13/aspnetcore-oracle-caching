@@ -64,6 +64,8 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
         command.Parameters.AddCacheItemId(key);
 
         command.ExecuteNonQuery();
+
+        connection.Close();
     }
 
     public async Task DeleteCacheItemAsync(string key, CancellationToken token = default)
@@ -80,6 +82,8 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
         command.Parameters.AddCacheItemId(key);
 
         await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
+        await connection.CloseAsync().ConfigureAwait(false);
     }
 
     public void SetCacheItem(string key, byte[] value, DistributedCacheEntryOptions options)
@@ -121,6 +125,10 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
             {
                 throw;
             }
+        }
+        finally
+        {
+            connection.Close();
         }
     }
 
@@ -167,6 +175,10 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
                 throw;
             }
         }
+        finally
+        {
+            await connection.CloseAsync().ConfigureAwait(false);
+        }
     }
 
     public void DeleteExpiredCacheItems()
@@ -181,6 +193,8 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
         command.Parameters.AddWithValue("UtcNow", OracleDbType.TimeStampTZ, SystemClock.UtcNow);
 
         command.ExecuteNonQuery();
+
+        connection.Close();
     }
 
     private byte[]? InternalGetCacheItem(string key)
@@ -199,7 +213,11 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
         using var reader = command.ExecuteReader(CommandBehavior.SequentialAccess | CommandBehavior.SingleRow |
                                                  CommandBehavior.SingleResult);
 
-        return !reader.Read() ? null : reader.GetFieldValue<byte[]>(Columns.Indexes.CacheItemValueIndex);
+        var result = !reader.Read() ? null : reader.GetFieldValue<byte[]>(Columns.Indexes.CacheItemValueIndex);
+        
+        connection.Close();
+
+        return result;
     }
 
     private async Task<byte[]?> InternalGetCacheItemAsync(string key, CancellationToken token = default)
@@ -224,8 +242,12 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
 
         if (!await reader.ReadAsync(token).ConfigureAwait(false)) return null;
 
-        return await reader.GetFieldValueAsync<byte[]>(Columns.Indexes.CacheItemValueIndex, token)
+        var result = await reader.GetFieldValueAsync<byte[]>(Columns.Indexes.CacheItemValueIndex, token)
             .ConfigureAwait(false);
+
+        await connection.CloseAsync().ConfigureAwait(false);
+
+        return result;
     }
 
     private void InternalRefreshCacheItem(string key)
@@ -242,6 +264,8 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
             .AddWithValue("UtcNow", OracleDbType.TimeStampTZ, SystemClock.UtcNow);
 
         command.ExecuteNonQuery();
+        
+        connection.Close();
     }
 
     private async Task InternalRefreshCacheItemAsync(string key,
@@ -261,6 +285,8 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
             .AddWithValue("UtcNow", OracleDbType.TimeStampTZ, SystemClock.UtcNow);
 
         await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
+        await connection.CloseAsync().ConfigureAwait(false);
     }
 
     private static bool IsDuplicateKeyException(OracleException ex)
