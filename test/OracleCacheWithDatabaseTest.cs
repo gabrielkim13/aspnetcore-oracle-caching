@@ -27,10 +27,10 @@ public class OracleCacheWithDatabaseTest
             // If you have to use other parameters for some reason, make sure to update this!
             {
                 ConnectionStringKey,
-                "User Id=CACHING;Password=root;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SID=FREE)))"
+                "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=XEPDB1)));User Id=IASLineControl;Password=dbo;"
             },
-            { SchemaNameKey, "CACHING" },
-            { TableNameKey, "Cache" }
+            { SchemaNameKey, "IASLineControl" },
+            { TableNameKey, "SNAPSHOTCACHE" }
         };
 
         var configurationBuilder = new ConfigurationBuilder();
@@ -693,13 +693,13 @@ public class OracleCacheWithDatabaseTest
         command.BindByName = true;
         command.CommandText =
             $"""
-             SELECT "Id",
-                    "Value",
-                    TO_CHAR("ExpiresAtTime", 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM'),
-                    "SlidingExpirationInSeconds",
-                    TO_CHAR("AbsoluteExpiration", 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM')
+             SELECT "ID",
+                    "VALUE",
+                    TO_CHAR("EXPIRESATTIME", 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM'),
+                    "SLIDINGEXPIRATIONINSECONDS",
+                    TO_CHAR("ABSOLUTEEXPIRATION", 'YYYY-MM-DD HH24:MI:SSxFF TZH:TZM')
              FROM "{_tableName}"
-             WHERE "Id" = :Id
+             WHERE "ID" = :Id
              """;
         command.Parameters.AddWithValue("Id", OracleDbType.NVarchar2, key);
 

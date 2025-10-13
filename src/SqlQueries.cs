@@ -5,7 +5,7 @@ namespace Microsoft.Extensions.Caching.Oracle;
 internal sealed class SqlQueries
 {
     private const string TableInfoFormat =
-        """
+    """
         SELECT TABLESPACE_NAME, OWNER, TABLE_NAME, TABLE_TYPE 
         FROM ALL_ALL_TABLES 
         WHERE OWNER = '{0}' 
@@ -16,71 +16,71 @@ internal sealed class SqlQueries
         """
         UPDATE
             {0}
-        SET "ExpiresAtTime" =
+        SET "EXPIRESATTIME" =
                 (CASE
-                     WHEN TO_NUMBER(24 * 60 * 60 * (CAST("AbsoluteExpiration" AS DATE) - CAST(:UtcNow AS DATE))) <=
-                          "SlidingExpirationInSeconds"
-                         THEN "AbsoluteExpiration"
+                     WHEN TO_NUMBER(24 * 60 * 60 * (CAST("ABSOLUTEEXPIRATION" AS DATE) - CAST(:UtcNow AS DATE))) <=
+                          "SLIDINGEXPIRATIONINSECONDS"
+                         THEN "ABSOLUTEEXPIRATION"
                      ELSE
-                         :UtcNow + NUMTODSINTERVAL("SlidingExpirationInSeconds", 'SECOND')
+                         :UtcNow + NUMTODSINTERVAL("SLIDINGEXPIRATIONINSECONDS", 'SECOND')
                     END)
-        WHERE "Id" = :Id
-          AND :UtcNow <= "ExpiresAtTime"
-          AND "SlidingExpirationInSeconds" IS NOT NULL
-          AND ("AbsoluteExpiration" IS NULL OR "AbsoluteExpiration" != "ExpiresAtTime")
+        WHERE "ID" = :Id
+          AND :UtcNow <= "EXPIRESATTIME"
+          AND "SLIDINGEXPIRATIONINSECONDS" IS NOT NULL
+          AND ("ABSOLUTEEXPIRATION" IS NULL OR "ABSOLUTEEXPIRATION" != "EXPIRESATTIME")
         """;
 
     private const string GetCacheItemFormat =
         """
-        SELECT "Value"
+        SELECT "VALUE"
         FROM {0}
-        WHERE "Id" = :Id
-          AND :UtcNow <= "ExpiresAtTime"
+        WHERE "ID" = :Id
+          AND :UtcNow <= "EXPIRESATTIME"
         """;
 
     private const string SetCacheItemFormat =
         """
         MERGE INTO {0} x
-        USING (SELECT :Id                                                                           AS "Id",
-                      :Value                                                                        AS "Value",
+        USING (SELECT :Id                                                                           AS "ID",
+                      :Value                                                                        AS "VALUE",
                       CASE
                           WHEN :SlidingExpirationInSeconds IS NULL THEN :AbsoluteExpiration
-                          ELSE :UtcNow + NUMTODSINTERVAL(:SlidingExpirationInSeconds, 'SECOND') END AS "ExpiresAtTime",
-                      :SlidingExpirationInSeconds                                                   AS "SlidingExpirationInSeconds",
-                      :AbsoluteExpiration                                                           AS "AbsoluteExpiration"
+                          ELSE :UtcNow + NUMTODSINTERVAL(:SlidingExpirationInSeconds, 'SECOND') END AS "EXPIRESATTIME",
+                      :SlidingExpirationInSeconds                                                   AS "SLIDINGEXPIRATIONINSECONDS",
+                      :AbsoluteExpiration                                                           AS "ABSOLUTEEXPIRATION"
                FROM DUAL) y
-        ON (x."Id" = y."Id")
+        ON (x."ID" = y."ID")
         WHEN MATCHED THEN
             UPDATE
-            SET x."Value"                      = y."Value",
-                x."ExpiresAtTime"              = y."ExpiresAtTime",
-                x."SlidingExpirationInSeconds" = y."SlidingExpirationInSeconds",
-                x."AbsoluteExpiration"         = y."AbsoluteExpiration"
-            WHERE x."Id" = y."Id"
+            SET x."VALUE"                      = y."VALUE",
+                x."EXPIRESATTIME"              = y."EXPIRESATTIME",
+                x."SLIDINGEXPIRATIONINSECONDS" = y."SLIDINGEXPIRATIONINSECONDS",
+                x."ABSOLUTEEXPIRATION"         = y."ABSOLUTEEXPIRATION"
+            WHERE x."ID" = y."ID"
         WHEN NOT MATCHED THEN
-            INSERT (x."Id", x."Value", x."ExpiresAtTime", x."SlidingExpirationInSeconds", x."AbsoluteExpiration")
-            VALUES (y."Id", y."Value", y."ExpiresAtTime", y."SlidingExpirationInSeconds", y."AbsoluteExpiration")
+            INSERT (x."ID", x."VALUE", x."EXPIRESATTIME", x."SLIDINGEXPIRATIONINSECONDS", x."ABSOLUTEEXPIRATION")
+            VALUES (y."ID", y."VALUE", y."EXPIRESATTIME", y."SLIDINGEXPIRATIONINSECONDS", y."ABSOLUTEEXPIRATION")
         """;
 
     private const string DeleteCacheItemFormat =
         """
         DELETE
         FROM {0}
-        WHERE "Id" = :Id
+        WHERE "ID" = :Id
         """;
 
     private const string DeleteExpiredCacheItemsFormat =
         """
         DELETE 
         FROM {0}
-        WHERE :UtcNow > "ExpiresAtTime"
+        WHERE :UtcNow > "EXPIRESATTIME"
         """;
 
     public SqlQueries(string schemaName, string tableName)
     {
         var tableNameWithSchema = string.Format(
             CultureInfo.InvariantCulture,
-            "\"{0}\".\"{1}\"",
+            "{0}.{1}",
             DelimitIdentifier(schemaName), DelimitIdentifier(tableName)
         );
 
