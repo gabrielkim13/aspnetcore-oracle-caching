@@ -27,7 +27,7 @@ public class OracleCacheWithDatabaseTest
             // If you have to use other parameters for some reason, make sure to update this!
             {
                 ConnectionStringKey,
-                "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=XEPDB1)));User Id=IASLineControl;Password=dbo;"
+                "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=XEPDB1)));User Id=xxx;Password=xxx;"
             },
             { SchemaNameKey, "IASLineControl" },
             { TableNameKey, "SNAPSHOTCACHE" }

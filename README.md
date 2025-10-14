@@ -102,7 +102,9 @@ In order to add it to the ASP.NET Core's main repository, we would need to have:
 
 ## Contact
 
-- Gabriel Kim - [gabrielkim13](https://github.com/gabrielkim13) - gabrielkim13@gmail.com
+- This package is a modified version of [aspnetcore-oracle-caching] (https://github.com/gabrielkim13/aspnetcore-oracle-caching),
+originally developed by [Gabriel Kim] under the MIT License.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

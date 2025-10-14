@@ -6,20 +6,20 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Company />
-        <Authors>Gabriel Kim</Authors>
+        <Authors>ellefry</Authors>
         <Description>ASP.NET Core's Distributed Cache implementation using Oracle Database</Description>
-        <Copyright>Gabriel Kim</Copyright>
-        <RepositoryUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</RepositoryUrl>
+        <Copyright>Copyright © 2025 Gabriel Kim; Modified and maintained by Ellefry Song</Copyright>
+        <RepositoryUrl>https://github.com/ellefry/aspnetcore-oracle-caching</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>cache, distributedcache, oracle</PackageTags>
+        <PackageTags>cache, distributedcache, oracle, net8</PackageTags>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-        <PackageId>gabrielkim13.Extensions.Caching.Oracle</PackageId>
-        <Product>gabrielkim13.Extensions.Caching.Oracle</Product>
+        <PackageId>ellefry.Extensions.Caching.Oracle</PackageId>
+        <Product>ellefry.Extensions.Caching.Oracle</Product>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <Version>2.1.1</Version>
+        <Version>1.0.0</Version>
         <Title>ASP.NET Core - Oracle Database Distributed Cache</Title>
-        <PackageProjectUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/ellefry/aspnetcore-oracle-caching</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
