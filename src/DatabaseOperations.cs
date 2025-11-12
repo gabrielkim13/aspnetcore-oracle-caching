@@ -214,7 +214,7 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
                                                  CommandBehavior.SingleResult);
 
         var result = !reader.Read() ? null : reader.GetFieldValue<byte[]>(Columns.Indexes.CacheItemValueIndex);
-        
+
         connection.Close();
 
         return result;
@@ -264,7 +264,7 @@ public class DatabaseOperations(string connectionString, string schemaName, stri
             .AddWithValue("UtcNow", OracleDbType.TimeStampTZ, SystemClock.UtcNow);
 
         command.ExecuteNonQuery();
-        
+
         connection.Close();
     }
 

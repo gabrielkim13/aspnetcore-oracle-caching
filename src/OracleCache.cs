@@ -16,7 +16,7 @@ public class OracleCache : IDistributedCache
     private readonly TimeSpan _defaultSlidingExpiration;
     private readonly Action _deleteExpiredCachedItemsDelegate;
     private readonly TimeSpan _expiredItemsDeletionInterval;
-    private readonly object _mutex = new();
+    private readonly Lock _mutex = new();
     private readonly ISystemClock _systemClock;
     private DateTimeOffset _lastExpirationScan;
 

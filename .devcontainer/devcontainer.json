@@ -1,6 +1,6 @@
 {
   "name": "aspnetcore-oracle-caching-devcontainer",
-  "image": "mcr.microsoft.com/devcontainers/dotnet:1-9.0-noble",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:1-10.0-noble",
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {
       "username": "vscode"

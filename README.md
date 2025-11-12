@@ -36,7 +36,7 @@ ASP.NET Core's Distributed Cache implementation using Oracle Database.
 ### Built With
 
 - [![.NET][.NET]][.NET-url]
-  - [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
+    - [ASP.NET Core](https://dotnet.microsoft.com/en-us/apps/aspnet)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -45,7 +45,7 @@ ASP.NET Core's Distributed Cache implementation using Oracle Database.
 ### Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/)
-  - [Docker Compose](https://docs.docker.com/compose/install/)
+    - [Docker Compose](https://docs.docker.com/compose/install/)
 - [Git](https://git-scm.com/downloads)
 - [.NET](https://learn.microsoft.com/en-us/dotnet/core/install/windows)
 
@@ -79,7 +79,7 @@ builder.Services.AddDistributedOracleCache(options =>
 });
 ```
 
-For more details, on using distributed cache in ASP.NET Core, refer to the docs: 
+For more details, on using distributed cache in ASP.NET Core, refer to the docs:
 [Distributed caching in ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -107,4 +107,5 @@ In order to add it to the ASP.NET Core's main repository, we would need to have:
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 [.NET]: https://img.shields.io/badge/.NET-5C2D91?style=badge&logo=.net&logoColor=white
+
 [.NET-url]: https://dotnet.microsoft.com/en-us/
