@@ -1,0 +1,118 @@
+name: Publish NuGet
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      ORACLE_USER: "CACHING"
+      ORACLE_PASSWORD: "root"
+      ORACLE_HOST: "localhost"
+      ORACLE_PORT: "1521"
+      ORACLE_SID: "FREE"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - name: Start services with Docker Compose
+        run: |
+          docker compose -p aspnetcore-oracle-caching up -d --build
+
+      - name: Wait for Oracle port
+        run: |
+          echo "Waiting for Oracle on ${ORACLE_HOST}:${ORACLE_PORT}..."
+          attempts=0
+          until nc -z ${ORACLE_HOST} ${ORACLE_PORT}; do
+            attempts=$((attempts+1))
+            if [ $attempts -gt 60 ]; then
+              echo "Timeout waiting for Oracle"
+              docker compose logs
+              exit 1
+            fi
+            sleep 5
+          done
+          # additional warmup time for DB initialization
+          sleep 20
+
+      - name: Export ORACLE_CONNECTIONSTRING for tests
+        run: |
+          echo "ORACLE_CONNECTIONSTRING=User Id=${ORACLE_USER};Password=${ORACLE_PASSWORD};Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${ORACLE_HOST})(PORT=${ORACLE_PORT}))(CONNECT_DATA=(SERVER=DEDICATED)(SID=${ORACLE_SID})));Pooling=false;" >> $GITHUB_ENV
+
+      - name: dotnet restore
+        run: dotnet restore
+
+      - name: dotnet build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: dotnet test
+        env:
+          ORACLE_CONNECTIONSTRING: ${{ env.ORACLE_CONNECTIONSTRING }}
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Get version
+        id: get_version
+        run: |
+          set -e
+          VERSION=$(sed -n 's:.*<PackageVersion>\(.*\)</PackageVersion>.*:\1:p' "$proj" || true)
+          if [ -z "$VERSION" ]; then
+            echo "Could not detect package version. Ensure the main csproj has <Version>."
+            exit 1
+          fi
+          echo "Detected version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create tag ${{ steps.get_version.outputs.version }}
+        if: success()
+        env:
+          GIT_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          TAG="${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping."
+          else
+            git tag -a "$TAG" -m "Release $VERSION"
+            git push origin "$TAG"
+          fi
+
+      - name: Create GitHub release
+        if: success()
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "${{ steps.get_version.outputs.version }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: dotnet pack
+        run: |
+          mkdir -p ./artifacts
+          VERSION=${{ steps.get_version.outputs.version }}
+          dotnet pack -c Release --no-build -o ./artifacts /p:PackageVersion=$VERSION
+
+      - name: dotnet nuget push
+        if: success()
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          for pkg in ./artifacts/*.nupkg; do
+            echo "Pushing $pkg"
+            dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done
