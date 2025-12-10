@@ -17,7 +17,7 @@
         <Product>gabrielkim13.Extensions.Caching.Oracle</Product>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <Version>10.0.0</Version>
+        <Version>10.0.1</Version>
         <Title>ASP.NET Core - Oracle Database Distributed Cache</Title>
         <PackageProjectUrl>https://github.com/gabrielkim13/aspnetcore-oracle-caching</PackageProjectUrl>
     </PropertyGroup>
