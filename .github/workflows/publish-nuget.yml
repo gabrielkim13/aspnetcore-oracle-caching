@@ -69,7 +69,7 @@ jobs:
         id: get_version
         run: |
           set -e
-          VERSION=$(sed -n 's:.*<PackageVersion>\(.*\)</PackageVersion>.*:\1:p' "$proj" || true)
+          VERSION=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' src/Microsoft.Extensions.Caching.Oracle.csproj || true)
           if [ -z "$VERSION" ]; then
             echo "Could not detect package version. Ensure the main csproj has <Version>."
             exit 1
