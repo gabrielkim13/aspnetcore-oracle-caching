@@ -12,7 +12,7 @@
         <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.2"/>
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
         <PackageVersion Include="Moq" Version="4.20.72"/>
-        <PackageVersion Include="Oracle.ManagedDataAccess.Core" Version="23.26.0"/>
+        <PackageVersion Include="Oracle.ManagedDataAccess.Core" Version="23.26.100"/>
         <PackageVersion Include="xunit" Version="2.9.3"/>
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
