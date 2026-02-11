@@ -1,0 +1,4 @@
+<Solution>
+    <Project Path="src/Microsoft.Extensions.Caching.Oracle.csproj"/>
+    <Project Path="test/Microsoft.Extensions.Caching.Oracle.Tests.csproj"/>
+</Solution>
